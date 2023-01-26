@@ -13,11 +13,12 @@ specifiers:
   eslint: 8.32.0
   eslint-config-next: 13.1.5
   fenceparser: ^2.2.0
+  framer-motion: ^8.5.2
   next: 13.1.5
   react: 18.2.0
   react-dom: 18.2.0
   react-powerglitch: ^1.0.0
-  react-typing-effects: ^0.1.0
+  react-typing-effects: ^0.1.1
   rehype-autolink-headings: ^6.1.1
   rehype-parse: ^8.0.4
   rehype-prism-plus: ^1.5.0
@@ -40,11 +41,12 @@ dependencies:
   eslint: 8.32.0
   eslint-config-next: 13.1.5_7uibuqfxkfaozanbtbziikiqje
   fenceparser: 2.2.0
+  framer-motion: 8.5.2_biqbaboplfbrettd7655fr4n2y
   next: 13.1.5_biqbaboplfbrettd7655fr4n2y
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-powerglitch: 1.0.0_biqbaboplfbrettd7655fr4n2y
-  react-typing-effects: 0.1.0
+  react-typing-effects: 0.1.1_framer-motion@8.5.2
   styled-components: 5.3.6_biqbaboplfbrettd7655fr4n2y
   typescript: 4.9.4
 
@@ -4262,12 +4264,12 @@ packages:
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /react-typing-effects/0.1.0:
-    resolution: {integrity: sha512-BrP+GV0Z09/eqXd2iD99XeT9iNn6XUh1MW4neSc43Wj5IfolSUPbFqcFidy4/QJymnqs9ed6UNhX+xPlInMBIg==}
+  /react-typing-effects/0.1.1_framer-motion@8.5.2:
+    resolution: {integrity: sha512-v6B46e7UZuoYqXNzF6roWIZY3SZ4mqlTXdmlEWsH6nDjGI65y0K8uTNLFPOZB3jbMPLISxe7Xr15Nmyg0rn2og==}
+    peerDependencies:
+      framer-motion: '>=8.0.0'
     dependencies:
       framer-motion: 8.5.2_biqbaboplfbrettd7655fr4n2y
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react/18.2.0:
