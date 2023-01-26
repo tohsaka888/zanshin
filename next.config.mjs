@@ -1,5 +1,3 @@
-/** @type {import('next').NextConfig} */
-
 import WithMDX from "@next/mdx";
 import toc from "@jsdevtools/rehype-toc";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -15,11 +13,7 @@ const withMDX = WithMDX({
     // If you use remark-gfm, you'll need to use next.config.mjs
     // as the package is ESM only
     // https://github.com/remarkjs/remark-gfm#install
-    remarkPlugins: [
-      [remarkCodeSandBox],
-      [remarkGfm],
-      [remarkHint],
-    ],
+    remarkPlugins: [[remarkCodeSandBox], [remarkGfm], [remarkHint]],
     rehypePlugins: [
       [
         rehypeAutolinkHeadings,
@@ -35,7 +29,6 @@ const withMDX = WithMDX({
         {
           nav: true,
           headings: ["h1", "h2", "h3"],
-          
         },
       ],
       [rehypePrism],
@@ -45,6 +38,7 @@ const withMDX = WithMDX({
   },
 });
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configure pageExtensions to include md and mdx
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
@@ -54,6 +48,7 @@ const nextConfig = {
     // ssr and displayName are configured by default
     styledComponents: true,
   },
+  transpilePackages: ["three", "meshline"],
 };
 
 // Merge MDX config with Next.js config
