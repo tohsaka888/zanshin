@@ -1,8 +1,10 @@
 import { PrismDarkTheme, PrismLightTheme } from "@/config/markdown/PrismTheme";
+import useCustomGlitch from "@/hooks/useCustomGlitch";
 import useResponsive from "@/hooks/useResponsive";
 import { ScreenSizeList } from "@/types";
 import { MDXProvider } from "@mdx-js/react";
 import Head from "next/head";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo } from "react";
 import styled from "styled-components";
@@ -52,8 +54,31 @@ function DocProvider({ children, size }: DocProviderProps) {
   }
 }
 
+function Navbar({ isHomePage }: { isHomePage: boolean }) {
+  const glitch = useCustomGlitch();
+  const { push } = useRouter();
+  return (
+    <NavbarContainer isHomePage={isHomePage}>
+      <div
+        ref={glitch.ref}
+        style={{
+          fontWeight: "bold",
+          fontSize: "24px",
+          cursor: "pointer",
+          color: isHomePage ? "#fff" : "#000",
+        }}
+        onClick={() => push("/")}
+      >
+        Zanshin
+      </div>
+    </NavbarContainer>
+  );
+}
+
 function Layout({ children }: Props) {
   const { size } = useResponsive();
+  const { pathname } = useRouter();
+  const isHomePage = useMemo(() => pathname === "/", [pathname]);
 
   return (
     <>
@@ -63,11 +88,23 @@ function Layout({ children }: Props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      <Navbar isHomePage={isHomePage} />
+
       <PrismLightTheme>
         <DocProvider size={size}>
           <MDXProvider>{children}</MDXProvider>
         </DocProvider>
       </PrismLightTheme>
+
+      {isHomePage && (
+        <Footer>
+          <Image src={"/vercel.svg"} alt={"vercel"} width={60} height={80} />
+          <div style={{ fontSize: "12px", marginLeft: "16px" }}>
+            Power by Vercel
+          </div>
+        </Footer>
+      )}
     </>
   );
 }
@@ -83,13 +120,14 @@ export const DocContent = styled.div<{ size: ScreenSizeList }>`
   }};
   background-color: #fff;
   padding: 4px 16px;
-  margin-top: 16px;
-  border-radius: 4px 4px 0px 0px;
+  border-radius: 4px;
+  margin-top: 80px;
+  margin-bottom: 24px;
 
   & .toc {
     position: fixed;
     left: calc(63vw + 48px);
-    top: 16px;
+    top: 80px;
     background-color: #fff;
     border-radius: 4px;
     width: 20vw;
@@ -144,6 +182,29 @@ export const DocContent = styled.div<{ size: ScreenSizeList }>`
     border-radius: 0 4px 4px 0;
     transform: translate3d(0px, -6px, 0px);
   }
+`;
+
+const Footer = styled.footer`
+  display: flex;
+  align-items: center;
+  position: fixed;
+  bottom: 0px;
+  width: 100vw;
+  justify-content: center;
+  box-shadow: 2px rgb(0 0 0 / 5%);
+`;
+
+const NavbarContainer = styled.div<{ isHomePage: boolean }>`
+  display: flex;
+  align-items: center;
+  top: 0px;
+  height: 60px;
+  position: fixed;
+  padding: 0px 48px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
+  width: 100%;
+  background: ${({ isHomePage }) => (isHomePage ? "transparent" : "#fff")};
+  z-index: 9999;
 `;
 
 export default Layout;
