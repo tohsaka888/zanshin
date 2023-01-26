@@ -112,16 +112,12 @@ export const DocContent = styled.div<{ size: ScreenSizeList }>`
 
   & .toc .toc-link {
     padding: 8px 10px;
-    margin: 2px 0px;
+    margin: 2px 10px 2px 0px;
     border-radius: 5px;
-  }
-
-  & .toc .toc-link {
     color: #000;
     text-decoration: none;
     display: block;
     font-size: 14px;
-    /* position: relative; */
   }
 
   & .toc .toc-link:hover {
