@@ -17,12 +17,24 @@ type DocProviderProps = {
 };
 
 function DocProvider({ children, size }: DocProviderProps) {
-  const { pathname } = useRouter();
+  const { pathname, asPath } = useRouter();
   const isDocPage = useMemo(() => pathname.includes("doc"), [pathname]);
+  const title = useMemo(() => asPath.split("#")[1] || "", [asPath]);
 
   useEffect(() => {
     if (isDocPage) {
-      const items = document.querySelectorAll<HTMLElement>(".toc-link");
+      const items = Array.from(
+        document.querySelectorAll<HTMLElement>(".toc-link")
+      );
+
+      const initialElement =
+        items.find(
+          (item) =>
+            item.innerText.split(" ").join("-").toLocaleLowerCase() === title
+        ) || items[0];
+
+      initialElement.classList.add("toc-link-selected");
+
       items.forEach((item) => {
         item.onclick = function () {
           // add the link click event
@@ -31,7 +43,7 @@ function DocProvider({ children, size }: DocProviderProps) {
         };
       });
     }
-  }, [isDocPage]);
+  }, [isDocPage, title]);
 
   if (isDocPage) {
     return <DocContent size={size}>{children}</DocContent>;
