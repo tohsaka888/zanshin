@@ -1,11 +1,48 @@
+import { PrismDarkTheme, PrismLightTheme } from "@/config/markdown/PrismTheme";
+import useResponsive from "@/hooks/useResponsive";
+import { ScreenSizeList } from "@/types";
+import { MDXProvider } from "@mdx-js/react";
 import Head from "next/head";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useMemo } from "react";
+import styled from "styled-components";
 
 type Props = {
   children: React.ReactNode;
 };
 
+type DocProviderProps = {
+  children: React.ReactNode;
+  size: ScreenSizeList;
+};
+
+function DocProvider({ children, size }: DocProviderProps) {
+  const { pathname } = useRouter();
+  const isDocPage = useMemo(() => pathname.includes("doc"), [pathname]);
+
+  useEffect(() => {
+    if (isDocPage) {
+      const items = document.querySelectorAll<HTMLElement>(".toc-link");
+      items.forEach((item) => {
+        item.onclick = function () {
+          // add the link click event
+          items.forEach((item) => item.classList.remove("toc-link-selected"));
+          (this as HTMLElement).classList.add("toc-link-selected");
+        };
+      });
+    }
+  }, [isDocPage]);
+
+  if (isDocPage) {
+    return <DocContent size={size}>{children}</DocContent>;
+  } else {
+    return <>{children}</>;
+  }
+}
+
 function Layout({ children }: Props) {
+  const { size } = useResponsive();
+
   return (
     <>
       <Head>
@@ -14,9 +51,91 @@ function Layout({ children }: Props) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {children}
+      <PrismLightTheme>
+        <DocProvider size={size}>
+          <MDXProvider>{children}</MDXProvider>
+        </DocProvider>
+      </PrismLightTheme>
     </>
   );
 }
+
+export const DocContent = styled.div<{ size: ScreenSizeList }>`
+  margin-left: 13vw;
+  max-width: ${({ size }) => {
+    if (size === "xl" || size === "lg") {
+      return "50vw";
+    } else {
+      return "100%";
+    }
+  }};
+  background-color: #fff;
+  padding: 4px 16px;
+  margin-top: 16px;
+  border-radius: 4px 4px 0px 0px;
+
+  & .toc {
+    position: fixed;
+    left: calc(63vw + 48px);
+    top: 16px;
+    background-color: #fff;
+    border-radius: 4px;
+    width: 20vw;
+    max-height: 100%;
+    overflow-y: auto;
+  }
+
+  & .toc::before {
+    content: "目录";
+    font-weight: bold;
+    padding: 16px 0px;
+    border-bottom: 1px solid #dfdfdf;
+    display: block;
+    margin: 0px 16px;
+  }
+
+  & .toc .toc-item {
+    margin-left: -24px;
+  }
+
+  & .toc .toc-link {
+    padding: 8px 10px;
+    margin: 2px 0px;
+    border-radius: 5px;
+  }
+
+  & .toc .toc-link {
+    color: #000;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    /* position: relative; */
+  }
+
+  & .toc .toc-link:hover {
+    background-color: #f7f8fa;
+  }
+
+  & .toc .toc-item::marker {
+    font-size: 0px;
+  }
+
+  & .toc .toc-link-selected {
+    color: #007fff;
+    font-weight: bold;
+  }
+
+  & .toc .toc-link-selected::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    margin-top: 7px;
+    width: 4px;
+    height: 16px;
+    background: #1e80ff;
+    border-radius: 0 4px 4px 0;
+    transform: translate3d(0px, -6px, 0px);
+  }
+`;
 
 export default Layout;
