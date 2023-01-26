@@ -110,7 +110,13 @@ function Layout({ children }: Props) {
 }
 
 export const DocContent = styled.div<{ size: ScreenSizeList }>`
-  margin-left: 13vw;
+  margin-left: ${({ size }) => {
+    if (size === "xl" || size === "lg") {
+      return "12vw";
+    } else {
+      return "0px";
+    }
+  }};;
   max-width: ${({ size }) => {
     if (size === "xl" || size === "lg") {
       return "50vw";
@@ -126,6 +132,13 @@ export const DocContent = styled.div<{ size: ScreenSizeList }>`
 
   & .toc {
     position: fixed;
+    display: ${({ size }) => {
+      if (size === "xl" || size === "lg") {
+        return "block";
+      } else {
+        return "none";
+      }
+    }};
     left: calc(63vw + 48px);
     top: 80px;
     background-color: #fff;
