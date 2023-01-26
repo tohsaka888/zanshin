@@ -1,33 +1,10 @@
+import Background from "@/components/HomePage/Background";
+import useCustomGlitch from "@/hooks/useCustomGlitch";
 import React from "react";
-import { useGlitch } from "react-powerglitch";
 import { Typing } from "react-typing-effects";
 
 export default function Home() {
-  const glitch = useGlitch({
-    playMode: "always",
-    createContainers: true,
-    hideOverflow: false,
-    timing: {
-      duration: 3000,
-    },
-    glitchTimeSpan: {
-      start: 0.4,
-      end: 0.6,
-    },
-    shake: {
-      velocity: 15,
-      amplitudeX: 0.2,
-      amplitudeY: 0.2,
-    },
-    slice: {
-      count: 6,
-      velocity: 15,
-      minHeight: 0.02,
-      maxHeight: 0.2,
-      hueRotate: true,
-    },
-    pulse: false,
-  });
+  const glitch = useCustomGlitch();
   return (
     <main
       style={{
@@ -38,6 +15,8 @@ export default function Home() {
         justifyContent: "center",
       }}
     >
+      <Background />
+
       <div style={{ height: "max-content" }}>
         <h1
           ref={glitch.ref}
@@ -46,6 +25,8 @@ export default function Home() {
             fontFamily: "JetBrainsMono NF",
             textAlign: "center",
             fontWeight: "bold",
+            color: "#fff",
+            textShadow: "5px 5px 2px #333333",
           }}
         >
           Zanshin
@@ -59,6 +40,8 @@ export default function Home() {
               textAlign: "center",
               fontStyle: "italic",
               minHeight: "32px",
+              color: "#fff",
+              textShadow: "2px 2px 2px #333333",
             }}
           >
             The mind with no remainder.
