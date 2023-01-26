@@ -3,7 +3,6 @@
 import WithMDX from "@next/mdx";
 import toc from "@jsdevtools/rehype-toc";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeCodeTitle from "rehype-code-title";
 import rehypePrism from "rehype-prism-plus";
 import remarkCodeSandBox from "remark-codesandbox";
 import remarkGfm from "remark-gfm";
@@ -30,6 +29,7 @@ const withMDX = WithMDX({
         },
       ],
       rehypeSlug,
+      // must under `rehypeAutolinkHeadings` and `rehypeSlug`
       [
         toc,
         {
