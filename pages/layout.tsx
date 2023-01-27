@@ -7,6 +7,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo } from "react";
+import { Tabs } from "react-anime-tab";
 import styled from "styled-components";
 
 type Props = {
@@ -57,6 +58,7 @@ function DocProvider({ children, size }: DocProviderProps) {
 function Navbar({ isHomePage }: { isHomePage: boolean }) {
   const glitch = useCustomGlitch();
   const { push } = useRouter();
+
   return (
     <NavbarContainer isHomePage={isHomePage}>
       <div
@@ -71,6 +73,24 @@ function Navbar({ isHomePage }: { isHomePage: boolean }) {
       >
         Zanshin
       </div>
+
+      <Tabs
+        items={[
+          { name: "主页", id: "/" },
+          { name: "面试题", id: "interview" },
+          { name: "随笔", id: "blog" },
+        ]}
+        style={{ height: "100%", marginLeft: "36px" }}
+        itemStyle={{ padding: "0px 16px", fontSize: "18px", color: "#cecece" }}
+        itemSelectedStyle={{
+          padding: "0px 16px",
+          fontSize: "18px",
+          textShadow: "0px 0px 5px #dfdfdf",
+          color: "#fff",
+        }}
+        defaultSelectedKeys={["/"]}
+        lineStyle={{ height: "3px", borderRadius: "2px" }}
+      />
     </NavbarContainer>
   );
 }
@@ -116,7 +136,7 @@ export const DocContent = styled.div<{ size: ScreenSizeList }>`
     } else {
       return "0px";
     }
-  }};;
+  }};
   max-width: ${({ size }) => {
     if (size === "xl" || size === "lg") {
       return "50vw";
@@ -218,6 +238,7 @@ const NavbarContainer = styled.div<{ isHomePage: boolean }>`
   width: 100%;
   background: ${({ isHomePage }) => (isHomePage ? "transparent" : "#fff")};
   z-index: 9999;
+  backdrop-filter: blur(38px);
 `;
 
 export default Layout;
