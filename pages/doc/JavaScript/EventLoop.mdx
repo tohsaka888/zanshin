@@ -1,0 +1,214 @@
+# Event Loop
+
+!> 本文参考[JavaScript: 一战吃透 Promise 精修版](https://juejin.cn/post/7189978888934522935?share_token=69be7ae1-a730-44d2-87f9-fa958bca68c3)做了精简和扩充。
+
+首先明确两个概念:
+
+- 事件执行的顺序一定是**先宏后微**。
+- `Event Loop`开始时会将整个脚本作为一个宏任务执行。
+
+x> 网上有很多"野鸡"文章说事件执行顺序是先微后宏，并且把事件执行拆分为同步任务-宏任务-微任务，实际上所谓的"同步任务"是第一轮的宏任务，`setTimout`这些注册成为了下一轮的宏任务。
+
+## Event Loop 执行过程
+
+1. 一开始整个脚本作为一个宏任务执行
+1. 执行过程中同步代码直接执行，宏任务进入宏任务队列，微任务进入微任务队列
+1. 当前宏任务执行完出队，检查微任务列表，有则依次执行，直到全部执行完
+1. 执行浏览器 UI 线程的渲染工作
+1. 检查是否有`Web Worker`任务，有则执行
+1. 执行完本轮的宏任务，回到 2，依此循环，直到宏任务和微任务队列都为空
+
+## 实战
+
+### 题目 1
+
+尝试写出以下代码的执行结果:
+
+```js
+async function async1() {
+  console.log("async1 start");
+  await async2();
+  console.log("async1 end");
+}
+async function async2() {
+  console.log("async2");
+}
+
+console.log("script start");
+
+setTimeout(function () {
+  console.log("setTimeout");
+}, 0);
+
+async1();
+
+new Promise(function (resolve) {
+  console.log("promise1");
+  resolve();
+}).then(function () {
+  console.log("promise2");
+});
+console.log("script end");
+```
+
+结果:
+
+```js
+script start
+async1 start
+async2
+promise1
+script end
+async1 end
+promise2
+setTimeout
+```
+
+### 题目 2
+
+```js
+async function async1() {
+  console.log("async1 start");
+  await async2();
+  console.log("async1 end");
+}
+async function async2() {
+  //async2做出如下更改：
+  new Promise(function (resolve) {
+    console.log("promise1");
+    resolve();
+  }).then(function () {
+    console.log("promise2");
+  });
+}
+console.log("script start");
+
+setTimeout(function () {
+  console.log("setTimeout");
+}, 0);
+async1();
+
+new Promise(function (resolve) {
+  console.log("promise3");
+  resolve();
+}).then(function () {
+  console.log("promise4");
+});
+
+console.log("script end");
+```
+
+执行结果:
+
+```javascript
+script start
+async1 start
+promise1
+promise3
+script end
+===第一轮宏任务执行完毕===
+promise2
+async1 end
+promise4
+===第一轮微任务执行完毕===
+setTimeout
+===第二轮宏任务执行完毕===
+===宏任务微任务队列都为空,结束Event Loop===
+```
+
+## 题目 3
+
+```js
+async function async1() {
+  console.log("async1 start");
+  await async2();
+  //更改如下：
+  setTimeout(function () {
+    console.log("setTimeout1");
+  }, 0);
+}
+async function async2() {
+  //更改如下：
+  setTimeout(function () {
+    console.log("setTimeout2");
+  }, 0);
+}
+console.log("script start");
+setTimeout(function () {
+  console.log("setTimeout3");
+}, 0);
+async1();
+new Promise(function (resolve) {
+  console.log("promise1");
+  resolve();
+}).then(function () {
+  console.log("promise2");
+});
+console.log("script end");
+```
+
+执行结果:
+
+```js
+script start
+async1 start
+promise1
+script end
+===第一轮宏任务执行完毕===
+promise2
+===第一轮微任务执行完毕===
+setTimeout3
+setTimeout2
+setTimeout1
+===第二轮宏任务执行完毕===
+===宏任务微任务队列都为空===
+```
+
+## 题目 4
+
+```js
+async function a1() {
+  console.log("a1 start");
+  await a2();
+  console.log("a1 end");
+}
+async function a2() {
+  console.log("a2");
+}
+console.log("script start");
+setTimeout(() => {
+  console.log("setTimeout");
+}, 0);
+Promise.resolve().then(() => {
+  console.log("promise1");
+});
+a1();
+let promise2 = new Promise((resolve) => {
+  resolve("promise2.then");
+  console.log("promise2");
+});
+promise2.then((res) => {
+  console.log(res);
+  Promise.resolve().then(() => {
+    console.log("promise3");
+  });
+});
+console.log("script end");
+```
+
+?> 注意`resolve`之后的代码仍然执行
+
+执行结果:
+
+```js
+script start
+a1 start
+a2
+promise2
+script end
+promise1
+a1 end
+promise2.then
+promise3
+setTimeout
+```
